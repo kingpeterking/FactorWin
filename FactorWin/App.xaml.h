@@ -7,6 +7,9 @@
 
 #include "App.g.h"
 
+
+
+
 namespace FactorWin
 {
 	/// <summary>

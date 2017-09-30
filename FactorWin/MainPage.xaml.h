@@ -15,22 +15,19 @@ namespace FactorWin
 	/// </summary>
 	public ref class MainPage sealed
 	{
+	
 	public:
 		MainPage();
-		void UpdateScreen();
-		void UpdateList();
-		void FactorWork();
-		
-		
 
+		Windows::Foundation::IAsyncActionWithProgress<int>^ CreateChidNodesQueueAS();
 
 	private:
-		// Click button delegate
+		// Click button
 		void FactorButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		
-		// delegate for concurrency to update text
-		 void IterationsText_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
+		// Build LN as text is inputted
+		void NoAInput_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 
-		
 	};
 }

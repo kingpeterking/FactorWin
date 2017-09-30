@@ -30,6 +30,8 @@ void ::FactorWin::MainPage::Connect(int __connectionId, ::Platform::Object^ __ta
         case 1:
             {
                 this->NoAInput = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(this->NoAInput))->TextChanged += ref new ::Windows::UI::Xaml::Controls::TextChangedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::Controls::TextChangedEventArgs^))&MainPage::NoAInput_TextChanged);
             }
             break;
         case 2:
@@ -77,6 +79,13 @@ void ::FactorWin::MainPage::Connect(int __connectionId, ::Platform::Object^ __ta
         case 10:
             {
                 this->IterationsText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+            }
+            break;
+        case 11:
+            {
+                this->UpdateList = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(this->UpdateList))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click);
             }
             break;
     }

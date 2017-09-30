@@ -10,9 +10,10 @@
 #include <atlstr.h>
 #include <gdiplus.h>
 
-// Added for UW Concurrency 
-#include <ppltasks.h>
-using namespace concurrency;
+
+#include <atomic>
+#include <collection.h>
+
 
 using namespace FactorWin;
 using namespace Platform;
@@ -32,39 +33,97 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
+
+// Global variables used to save passing lots of parameters and to aid concurrency 
 // Create one, zero as long numbers - global scope so they don't get reinitiatlised for each thread
 LongNumber One(1);
 LongNumber Zero(1);
 
 // Set the target as a global variable so we don't need to pass it around 
 LongNumber LNTarget;
-int ResultLen = 0;
-int IterCount = 0; 
+int ResultLen;
+int IterCount;
 
 // Create the queue 
 FactorQueue FNQueue;
 FactorQueue SolvedQueue;
 
 // Counter for number solved - global so doesn't need to be passed around 
-int SolvedCount = 0;
+int SolvedCount;
 
 // declare the functions we will use later to build the nodes and solve the factor and update the screen
 void CreateChidNodesQueue();
+void ScanandDispatchQueue(FactorWin::MainPage^ Sender);
 
+delegate void UpdateListFn();
 
 
 MainPage::MainPage()
 {
 	InitializeComponent();
+
+	// Set up standard long numbers  - one, zero 
+	One.SetLongNumber(1, 0);
+	Zero.SetLongNumber(0, 0);
+
+	ResultLen = 0;
+	IterCount = 0;
+
+	// endless loop that scans the queue for entries
+	//thread ScanandDispatchQueueThread0(&ScanandDispatchQueue, this);							
+	//ScanandDispatchQueueThread0.detach();
+
+
+
 }
 
-void FactorWin::MainPage::UpdateScreen()
+
+
+
+void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	FactorWin::MainPage::QueueText->Text = FNQueue.ReturnQueueSize().ToString();
+	
+	// Create the head of the Queue 
+	FactorNode FNHeadofQueue(0, Zero, Zero, false);
+	FNQueue.Push(FNHeadofQueue);
+
+	// Clear out anything that was there before
+	FactorWin::MainPage::ResultsList->Items->Clear();
+
+	// Set up the progress bar
+	FactorWin::MainPage::QueueProgress->Maximum = LNTarget.GetLongNumberLength() * 1000; 
+
+	Windows::Foundation::IAsyncActionWithProgress<int>^ ScanandDisp = FactorWin::MainPage::CreateChidNodesQueueAS();
+	ScanandDisp->Progress =
+		ref new Windows::Foundation::AsyncActionProgressHandler<int>
+		([this](Windows::Foundation::IAsyncActionWithProgress<int>^, int progress)
+	{
+		
+		// Update Queue info
+		FactorWin::MainPage::QueueText->Text = progress.ToString();
+		FactorWin::MainPage::QueueProgress->Value = progress ;
+
+		// Update results as they become available
+		while (SolvedQueue.ReturnQueueSize() > 0)
+		{
+			FactorNode FNItem = SolvedQueue.Pop();
+			LongNumber AValuePassed = FNItem.LNGetAValue();
+			LongNumber BValuePassed = FNItem.LNGetBValue();
+			Platform::String ^ AValueStr = LongNumberChar(AValuePassed);
+			Platform::String ^ BValueStr = LongNumberChar(BValuePassed);
+			Platform::String ^ Display = "A : " + AValueStr + " B : " + BValueStr;
+			FactorWin::MainPage::ResultsList->Items->Append(Display);
+
+		}
+
+	}
+	);
+	
 
 }
 
-void FactorWin::MainPage::UpdateList()
+
+void FactorWin::MainPage::Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	while (SolvedQueue.ReturnQueueSize() > 0)
 	{
@@ -75,209 +134,48 @@ void FactorWin::MainPage::UpdateList()
 		Platform::String ^ BValueStr = LongNumberChar(BValuePassed);
 		Platform::String ^ Display = "A : " + AValueStr + " B : " + BValueStr;
 		FactorWin::MainPage::ResultsList->Items->Append(Display);
-
+	
 	}
-
 }
 
+// This function runs in a background thread and scans the Activity Queue and creates actions when it finds something 
 
-void  FactorWin::MainPage::FactorWork()
+void ScanandDispatchQueue(FactorWin::MainPage^ Sender)
 {
-	SolvedCount = 0;							// reset solved counter
 
-												// first check for a number in NoA
-	Platform::String^ NoAIn = NoAInput->Text;
-	std::wstring NoAInW(NoAIn->Begin());
-	std::string NoAInA(NoAInW.begin(), NoAInW.end());
-	const char* NoACharStr = NoAInA.c_str();
-	int LenA = NoAIn->Length();
-
-	Messages->Text = "Checking Input\r\n";
-	if (NoAIn->Length() == 0)
-	{
-		Messages->Text = Messages->Text + "No Input\r\n";
-		return;
-	}
-	else
-	{
-		Messages->Text = Messages->Text + "Length of Arg : " + LenA + "\r\n";
-	}
-
-	LongNumber ArgPassed(NoACharStr);
-	LNTarget = ArgPassed;
-	ResultLen = LNTarget.GetLongNumberLength();
-
-	// Set up standard long numbers  - one, zero 
-	One.SetLongNumber(1, 0);
-	Zero.SetLongNumber(0, 0);
-
-	// clear the text file for node overflow
-	remove("QueueNode.txt");
-
-	// Create the head of the Queue 
-	FactorNode FNHeadofQueue(0, Zero, Zero, false);
-	FNQueue.Push(FNHeadofQueue);
-
-	// Clear out anything that was there before
-	FactorWin::MainPage::ResultsList->Items->Clear();
 
 	// kick off the threads that will consume the new queue items
-	using namespace placeholders;
-	while (FNQueue.ReturnQueueSize() > 0)
+	while (true)
 	{
-		// Print Queue info
-		//FactorWin::MainPage::QueueText->Text = FNQueue.ReturnQueueSize().ToString();
+		SolvedCount = 0;							// reset solved counter
 
-		FactorWin::MainPage::UpdateScreen();
-		FactorWin::MainPage::UpdateList();
+		while (FNQueue.ReturnQueueSize() > 0)
+		{
 
-		// Added for UWP concurrency 
-		auto NodesChildCreate0 = create_task(CreateChidNodesQueue);
-		NodesChildCreate0.then([](void) {});
+			// Std C++ Concurrency 
+			thread CreateComsume0(&CreateChidNodesQueue);
+			thread CreateComsume1(&CreateChidNodesQueue);
+			thread CreateComsume2(&CreateChidNodesQueue);
+			thread CreateComsume3(&CreateChidNodesQueue);
+			thread CreateComsume4(&CreateChidNodesQueue);
 
-		auto NodesChildCreate1 = create_task(CreateChidNodesQueue);
-		NodesChildCreate1.then([](void) {});
+			CreateComsume0.detach();
+			CreateComsume1.detach();
+			CreateComsume2.detach();
+			CreateComsume3.detach();
+			CreateComsume4.detach();
 
-		auto NodesChildCreate2 = create_task(CreateChidNodesQueue);
-		NodesChildCreate2.then([](void) {});
 
-		auto NodesChildCreate3 = create_task(CreateChidNodesQueue);
-		NodesChildCreate3.then([](void) {});
+		}
 
-		// Std C++ Concurrency 
-		//thread CreateComsume0(&CreateChidNodesQueue);
-		//thread CreateComsume1(&CreateChidNodesQueue);
-		//thread CreateComsume2(&CreateChidNodesQueue);
-		//thread CreateComsume3(&CreateChidNodesQueue);
-		//thread CreateComsume4(&CreateChidNodesQueue);
-		//
-		//CreateComsume0.join();
-		//CreateComsume1.detach();
-		//CreateComsume2.detach();
-		//CreateComsume3.detach();
-		//CreateComsume4.detach();
+		// wait one second before checking again
+		std::this_thread::sleep_for(std::chrono::seconds(1));		
+
 
 	}
 
-	FactorWin::MainPage::IterationsText->Text = IterCount.ToString();
-	Messages->Text = Messages->Text + "Solved Count : " + SolvedCount + "\r\n";
-
-	FactorWin::MainPage::UpdateList();
-
 
 }
-
-
-
-
-
-void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	// Called when Factor Button clicked
-	FactorWin::MainPage::FactorWork();
-	// auto FactorWorkOP = create_task(FactorWork);
-
-
-	/*IAsyncOperation<auto>^ deviceOp = FactorWin::MainPage::FactorWork();
-	auto FactorWorkOP = create_task(FactorWin::MainPage::FactorWork);
-	FactorWorkOP.then([](void) {});
-	*/
-
-	//
-	//
-	//SolvedCount = 0;							// reset solved counter
-
-	//// first check for a number in NoA
-	//Platform::String^ NoAIn = NoAInput->Text;
-	//std::wstring NoAInW(NoAIn->Begin());
-	//std::string NoAInA(NoAInW.begin(), NoAInW.end());
-	//const char* NoACharStr = NoAInA.c_str();
-	//int LenA = NoAIn->Length();
-
-	//Messages->Text = "Checking Input\r\n";
-	//if (NoAIn->Length() == 0)
-	//{
-	//	Messages->Text = Messages->Text + "No Input\r\n";
-	//	return;
-	//}
-	//else
-	//{
-	//	Messages->Text = Messages->Text + "Length of Arg : " + LenA + "\r\n";
-	//}
-	//
-	//LongNumber ArgPassed(NoACharStr);
-	//LNTarget = ArgPassed; 
-	//ResultLen = LNTarget.GetLongNumberLength();
-
-	//// Set up standard long numbers  - one, zero 
-	//One.SetLongNumber(1, 0);
-	//Zero.SetLongNumber(0, 0);
-
-	//// clear the text file for node overflow
-	//remove("QueueNode.txt");
-
-	//// Create the head of the Queue 
-	//FactorNode FNHeadofQueue(0, Zero, Zero, false); 
-	//FNQueue.Push(FNHeadofQueue);
-
-	//// Clear out anything that was there before
-	//FactorWin::MainPage::ResultsList->Items->Clear();
-
-	//// kick off the threads that will consume the new queue items
-	//using namespace placeholders;
-	//while (FNQueue.ReturnQueueSize() > 0)
-	//{
-	//	// Print Queue info
-	//	//FactorWin::MainPage::QueueText->Text = FNQueue.ReturnQueueSize().ToString();
-
-	//	FactorWin::MainPage::UpdateScreen();
-	//	FactorWin::MainPage::UpdateList();
-
-	//	// Added for UWP concurrency 
-	//	auto NodesChildCreate0 = create_task(CreateChidNodesQueue);
-	//	NodesChildCreate0.then([](void) {});
-
-	//	auto NodesChildCreate1 = create_task(CreateChidNodesQueue);
-	//	NodesChildCreate1.then([](void) {});
-
-	//	auto NodesChildCreate2 = create_task(CreateChidNodesQueue);
-	//	NodesChildCreate2.then([](void) {});
-
-	//	auto NodesChildCreate3 = create_task(CreateChidNodesQueue);
-	//	NodesChildCreate3.then([](void) {});
-
-	//	// Std C++ Concurrency 
-	//	//thread CreateComsume0(&CreateChidNodesQueue);
-	//	//thread CreateComsume1(&CreateChidNodesQueue);
-	//	//thread CreateComsume2(&CreateChidNodesQueue);
-	//	//thread CreateComsume3(&CreateChidNodesQueue);
-	//	//thread CreateComsume4(&CreateChidNodesQueue);
-	//	//
-	//	//CreateComsume0.join();
-	//	//CreateComsume1.detach();
-	//	//CreateComsume2.detach();
-	//	//CreateComsume3.detach();
-	//	//CreateComsume4.detach();
-	//	
-	//}
-
-	//FactorWin::MainPage::IterationsText->Text = IterCount.ToString();
-	//Messages->Text = Messages->Text + "Solved Count : " + SolvedCount + "\r\n";
-
-	//FactorWin::MainPage::UpdateList();
-
-
-
-}
-
-void FactorWin::MainPage::IterationsText_TextChanged(Platform::Object ^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs ^ e)
-{
-	QueueText->Text = "One";
-
-}
-
-
-
 
 
 
@@ -324,28 +222,28 @@ void CreateChidNodesQueue()
 					switch (CompResult)
 					{
 					case -1:			// less than
-						{FactorNode FNAdd(
-							Level + 1,			// LevelPassed
-							AValuePassed,		// AValuePassed
-							BValuePassed,		// BValuePassed
-							false				// FactorCompletePassed
-						);
-						// PrintFactorNode(&FNAdd);
-						FNQueue.Push(FNAdd);
-						break;
-						}
+					{FactorNode FNAdd(
+						Level + 1,			// LevelPassed
+						AValuePassed,		// AValuePassed
+						BValuePassed,		// BValuePassed
+						false				// FactorCompletePassed
+					);
+					// PrintFactorNode(&FNAdd);
+					FNQueue.Push(FNAdd);
+					break;
+					}
 					case 0:				// solved
-						{FactorComplete = true;
-						FactorNode FNAdd(
-							Level + 1,			// LevelPassed
-							AValuePassed,		// AValuePassed
-							BValuePassed,		// BValuePassed
-							true				// FactorCompletePassed
-						);
-						SolvedQueue.Push(FNAdd);
-						SolvedCount++;
-						break;
-						}
+					{FactorComplete = true;
+					FactorNode FNAdd(
+						Level + 1,			// LevelPassed
+						AValuePassed,		// AValuePassed
+						BValuePassed,		// BValuePassed
+						true				// FactorCompletePassed
+					);
+					SolvedQueue.Push(FNAdd);
+					SolvedCount++;
+					break;
+					}
 					case 1: // greater than so exit B loop
 						goto ExitBLoop;
 						break;
@@ -367,4 +265,71 @@ void CreateChidNodesQueue()
 
 
 
+void FactorWin::MainPage::NoAInput_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
+{
+	// first check for a number in NoA
+	Platform::String^ NoAIn = NoAInput->Text;
+	std::wstring NoAInW(NoAIn->Begin());
+	std::string NoAInA(NoAInW.begin(), NoAInW.end());
+	const char* NoACharStr = NoAInA.c_str();
+	int LenA = NoAIn->Length();
+
+	Messages->Text = "Checking Input\r\n";
+	if (NoAIn->Length() == 0)
+	{
+		Messages->Text = Messages->Text + "No Input\r\n";
+		return;
+	}
+	else
+	{
+		Messages->Text = Messages->Text + "Length of Arg : " + LenA + "\r\n";
+	}
+
+	LongNumber ArgPassed(NoACharStr);
+	LNTarget = ArgPassed;
+	ResultLen = LNTarget.GetLongNumberLength();
+}
+
+
+
+Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateChidNodesQueueAS()
+{
+	
+	return Concurrency::create_async([this](Concurrency::progress_reporter <int> reporter) -> void
+		{
+
+			int QueueSize = FNQueue.ReturnQueueSize();
+			reporter.report(QueueSize);
+			SolvedCount = 0;							// reset solved counter
+
+			// kick off the threads that will consume the new queue items
+			while (QueueSize > 0)
+			{
+
+				QueueSize = FNQueue.ReturnQueueSize();
+				reporter.report(QueueSize);
+				int ThreadCount = int(QueueSize / 1000) + 10;
+
+				vector<thread> threads;
+
+				for (int i = 0; i < ThreadCount; i++) {
+					threads.push_back(thread(&CreateChidNodesQueue));
+				}
+
+				for (int i = 0; i < ThreadCount; i++) 
+				{
+					threads[i].join();
+				}
+
+
+			}
+
+				
+
+
+	}); // end of Async
+
+
+
+}
 

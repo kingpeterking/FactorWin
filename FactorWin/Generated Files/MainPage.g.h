@@ -45,6 +45,7 @@ namespace FactorWin
         private: ::Windows::UI::Xaml::Controls::ProgressBar^ QueueProgress;
         private: ::Windows::UI::Xaml::Controls::TextBox^ QueueText;
         private: ::Windows::UI::Xaml::Controls::TextBox^ IterationsText;
+        private: ::Windows::UI::Xaml::Controls::Button^ UpdateList;
     };
 }
 

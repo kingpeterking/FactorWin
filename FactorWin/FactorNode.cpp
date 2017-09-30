@@ -6,13 +6,13 @@ using namespace std;
 FactorNode::FactorNode()
 {
 	// Create 0 as a Long Number
-	LongNumber Zero(1);
-	Zero.SetLongNumber(0, 0);
+	LongNumber ZeroA(1);
+	ZeroA.SetLongNumber(0, 0);
 
 	// Creates a new node with no data or values 
 	Level = 0;
-	AValue = Zero;
-	BValue = Zero;
+	AValue = ZeroA;
+	BValue = ZeroA;
 	FactorComplete = false;
 }
 

@@ -6,6 +6,15 @@
 #include "pch.h"
 #include "MainPage.xaml.h"
 
+// Includes for Z Calc Types
+#include "LongNumber.h"
+#include "FactorQueue.h"
+
+// Added for UW Concurrency 
+#include <ppltasks.h>
+using namespace concurrency;
+
+
 using namespace FactorWin;
 
 using namespace Platform;
@@ -22,6 +31,36 @@ using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
+// Includes for Z Calc Types
+#include "LongNumber.h"
+#include "FactorQueue.h"
+
+
+//// Global variables used to save passing lots of parameters and to aid concurrency 
+//// Create one, zero as long numbers - global scope so they don't get reinitiatlised for each thread
+//LongNumber One(1);
+//LongNumber Zero(1);
+//
+//// Set the target as a global variable so we don't need to pass it around 
+//LongNumber LNTarget;
+//int ResultLen;
+//int IterCount;
+//
+//// Create the queue 
+//FactorQueue FNQueue;
+//FactorQueue SolvedQueue;
+//
+//// Counter for number solved - global so doesn't need to be passed around 
+//int SolvedCount;
+//
+//// declare the functions we will use later to build the nodes and solve the factor and update the screen
+//void CreateChidNodesQueue();
+//void ScanandDispatchQueue();
+
+//delegate void UpdateListFn();
+
+
+
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
 /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,6 +69,17 @@ App::App()
 {
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
+
+	//// Set up standard long numbers  - one, zero 
+	//One.SetLongNumber(1, 0);
+	//Zero.SetLongNumber(0, 0);
+
+	//ResultLen = 0;
+	//IterCount = 0;
+
+	//thread ScanandDispatchQueueThread0(&ScanandDispatchQueue);							// endless loop that scans the queue for entries
+	//ScanandDispatchQueueThread0.detach();
+
 }
 
 /// <summary>
@@ -114,3 +164,6 @@ void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Naviga
 {
     throw ref new FailureException("Failed to load Page " + e->SourcePageType.Name);
 }
+
+
+
