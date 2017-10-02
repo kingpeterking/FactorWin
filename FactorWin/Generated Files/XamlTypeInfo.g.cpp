@@ -39,6 +39,90 @@ template<typename T>
     return ref new ::Platform::Box<T>((T)userType->CreateEnumUIntFromString(input));
 }
 
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_ClearColor(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->ClearColor);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_Dpi(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->Dpi);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_UseSharedDevice(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->UseSharedDevice);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_ForceSoftwareRenderer(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->ForceSoftwareRenderer);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_DpiScale(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->DpiScale);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_ReadyToDraw(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->ReadyToDraw);
+}
+
+template<typename TDeclaringType, typename TValue>
+::Platform::Object^ GetValueTypeMember_Size(::Platform::Object^ instance)
+{
+    return ref new ::Platform::Box<TValue>(safe_cast<TDeclaringType^>(instance)->Size);
+}
+
+template<typename TDeclaringType>
+::Platform::Object^ GetReferenceTypeMember_Device(::Platform::Object^ instance)
+{
+    return safe_cast<TDeclaringType^>(instance)->Device;
+}
+
+template<typename TDeclaringType>
+::Platform::Object^ GetReferenceTypeMember_CustomDevice(::Platform::Object^ instance)
+{
+    return safe_cast<TDeclaringType^>(instance)->CustomDevice;
+}
+
+template<typename TDeclaringType, typename TValue>
+void SetValueTypeMember_ClearColor(::Platform::Object^ instance, ::Platform::Object^ value)
+{
+    safe_cast<TDeclaringType^>(instance)->ClearColor = safe_cast<::Platform::IBox<TValue>^>(value)->Value;
+}
+
+template<typename TDeclaringType, typename TValue>
+void SetValueTypeMember_UseSharedDevice(::Platform::Object^ instance, ::Platform::Object^ value)
+{
+    safe_cast<TDeclaringType^>(instance)->UseSharedDevice = safe_cast<::Platform::IBox<TValue>^>(value)->Value;
+}
+
+template<typename TDeclaringType, typename TValue>
+void SetValueTypeMember_ForceSoftwareRenderer(::Platform::Object^ instance, ::Platform::Object^ value)
+{
+    safe_cast<TDeclaringType^>(instance)->ForceSoftwareRenderer = safe_cast<::Platform::IBox<TValue>^>(value)->Value;
+}
+
+template<typename TDeclaringType, typename TValue>
+void SetValueTypeMember_DpiScale(::Platform::Object^ instance, ::Platform::Object^ value)
+{
+    safe_cast<TDeclaringType^>(instance)->DpiScale = safe_cast<::Platform::IBox<TValue>^>(value)->Value;
+}
+
+template<typename TDeclaringType, typename TValue>
+void SetReferenceTypeMember_CustomDevice(::Platform::Object^ instance, ::Platform::Object^ value)
+{
+    safe_cast<TDeclaringType^>(instance)->CustomDevice = safe_cast<TValue^>(value);
+}
+
 struct TypeInfo
 {
     PCWSTR  typeName;
@@ -60,28 +144,76 @@ struct TypeInfo
 TypeInfo TypeInfos[] = 
 {
     //   0
-    L"FactorWin.MainPage", L"",
-    &ActivateType<::FactorWin::MainPage>, nullptr, nullptr, nullptr,
-    1, // Windows.UI.Xaml.Controls.Page
-    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
-    true,  false, false, false,
+    L"Object", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    -1,
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, true,  false, false,
     //   1
-    L"Windows.UI.Xaml.Controls.Page", L"",
+    L"Single", L"",
     nullptr, nullptr, nullptr, nullptr,
     -1,
     0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
     false, true,  false, false,
     //   2
+    L"Boolean", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    -1,
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, true,  false, false,
+    //   3
+    L"Windows.UI.Color", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    4, // System.ValueType
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, false, true,  false,
+    //   4
+    L"System.ValueType", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    0, // Object
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, false, false, false,
+    //   5
+    L"FactorWin.MainPage", L"",
+    &ActivateType<::FactorWin::MainPage>, nullptr, nullptr, nullptr,
+    7, // Windows.UI.Xaml.Controls.Page
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
+    true,  false, false, false,
+    //   6
+    L"Windows.Foundation.Size", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    -1,
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, true,  false, false,
+    //   7
+    L"Windows.UI.Xaml.Controls.Page", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    -1,
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, true,  false, false,
+    //   8
     L"Windows.UI.Xaml.Controls.UserControl", L"",
     nullptr, nullptr, nullptr, nullptr,
     -1,
     0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
     false, true,  false, false,
+    //   9
+    L"Microsoft.Graphics.Canvas.CanvasDevice", L"",
+    nullptr, nullptr, nullptr, nullptr,
+    0, // Object
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, false, true,  false,
+    //  10
+    L"Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl", L"",
+    &ActivateType<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>, nullptr, nullptr, nullptr,
+    8, // Windows.UI.Xaml.Controls.UserControl
+    0, 0, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
+    false, false, false, false,
     //  Last type here is for padding
     L"", L"",
     nullptr, nullptr, nullptr, nullptr,
     -1, 
-    0, 0,::Windows::UI::Xaml::Interop::TypeKind::Custom,
+    9, 0,::Windows::UI::Xaml::Interop::TypeKind::Custom,
     false, false, false, false,
 };
 
@@ -93,38 +225,134 @@ UINT TypeInfoLookup[] = {
       0,   //   4
       0,   //   5
       0,   //   6
-      0,   //   7
-      0,   //   8
-      0,   //   9
-      0,   //  10
-      0,   //  11
-      0,   //  12
-      0,   //  13
-      0,   //  14
-      0,   //  15
-      0,   //  16
-      0,   //  17
-      0,   //  18
-      1,   //  19
-      1,   //  20
-      1,   //  21
-      1,   //  22
-      1,   //  23
-      1,   //  24
-      1,   //  25
-      1,   //  26
-      1,   //  27
-      1,   //  28
-      1,   //  29
-      2,   //  30
-      2,   //  31
-      2,   //  32
-      2,   //  33
-      2,   //  34
-      2,   //  35
-      2,   //  36
-      3,   //  37
+      2,   //   7
+      3,   //   8
+      3,   //   9
+      3,   //  10
+      3,   //  11
+      3,   //  12
+      3,   //  13
+      3,   //  14
+      3,   //  15
+      3,   //  16
+      5,   //  17
+      5,   //  18
+      6,   //  19
+      6,   //  20
+      6,   //  21
+      6,   //  22
+      6,   //  23
+      7,   //  24
+      7,   //  25
+      7,   //  26
+      7,   //  27
+      7,   //  28
+      7,   //  29
+      8,   //  30
+      8,   //  31
+      8,   //  32
+      8,   //  33
+      8,   //  34
+      8,   //  35
+      8,   //  36
+      9,   //  37
+      9,   //  38
+     10,   //  39
+     10,   //  40
+     10,   //  41
+     10,   //  42
+     10,   //  43
+     10,   //  44
+     10,   //  45
+     10,   //  46
+     10,   //  47
+     11,   //  48
 };
+
+struct MemberInfo 
+{
+    PCWSTR shortName;
+    ::Platform::Object^ (*getter)(::Platform::Object^);
+    void (*setter)(::Platform::Object^, ::Platform::Object^);
+    int typeIndex;
+    int targetTypeIndex;
+    bool isReadOnly;
+    bool isDependencyProperty;
+    bool isAttachable;
+};
+
+MemberInfo MemberInfos[] = 
+{
+    //   0 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ClearColor
+    L"ClearColor",
+    &GetValueTypeMember_ClearColor<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Windows::UI::Color>,
+    &SetValueTypeMember_ClearColor<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Windows::UI::Color>,
+    3, // Windows.UI.Color
+    -1,
+    false, false, false,
+    //   1 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Device
+    L"Device",
+    &GetReferenceTypeMember_Device<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>,
+    nullptr,
+    9, // Microsoft.Graphics.Canvas.CanvasDevice
+    -1,
+    true,  false, false,
+    //   2 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Dpi
+    L"Dpi",
+    &GetValueTypeMember_Dpi<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::default::float32>,
+    nullptr,
+    1, // Single
+    -1,
+    true,  false, false,
+    //   3 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.UseSharedDevice
+    L"UseSharedDevice",
+    &GetValueTypeMember_UseSharedDevice<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Platform::Boolean>,
+    &SetValueTypeMember_UseSharedDevice<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Platform::Boolean>,
+    2, // Boolean
+    -1,
+    false, false, false,
+    //   4 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ForceSoftwareRenderer
+    L"ForceSoftwareRenderer",
+    &GetValueTypeMember_ForceSoftwareRenderer<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Platform::Boolean>,
+    &SetValueTypeMember_ForceSoftwareRenderer<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Platform::Boolean>,
+    2, // Boolean
+    -1,
+    false, false, false,
+    //   5 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.DpiScale
+    L"DpiScale",
+    &GetValueTypeMember_DpiScale<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::default::float32>,
+    &SetValueTypeMember_DpiScale<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::default::float32>,
+    1, // Single
+    -1,
+    false, false, false,
+    //   6 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CustomDevice
+    L"CustomDevice",
+    &GetReferenceTypeMember_CustomDevice<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>,
+    &SetReferenceTypeMember_CustomDevice<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Microsoft::Graphics::Canvas::CanvasDevice>,
+    9, // Microsoft.Graphics.Canvas.CanvasDevice
+    -1,
+    false, false, false,
+    //   7 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ReadyToDraw
+    L"ReadyToDraw",
+    &GetValueTypeMember_ReadyToDraw<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Platform::Boolean>,
+    nullptr,
+    2, // Boolean
+    -1,
+    true,  false, false,
+    //   8 - Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Size
+    L"Size",
+    &GetValueTypeMember_Size<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl, ::Windows::Foundation::Size>,
+    nullptr,
+    6, // Windows.Foundation.Size
+    -1,
+    true,  false, false,
+};
+
+PCWSTR GetShortName(PCWSTR longName)
+{
+    PCWSTR separator = wcsrchr(longName, '.');
+    return separator != nullptr ? separator + 1: longName;
+}
 
 TypeInfo* GetTypeInfo(::Platform::String^ typeName)
 {
@@ -137,6 +365,31 @@ TypeInfo* GetTypeInfo(::Platform::String^ typeName)
             {
                 return &TypeInfos[i];
             }
+        }
+    }
+    return nullptr;
+}
+
+MemberInfo* GetMemberInfo(::Platform::String^ longMemberName)
+{
+    for (int lastDotIndex = longMemberName->Length(); lastDotIndex >= 0; lastDotIndex--)
+    {
+        if (longMemberName->Data()[lastDotIndex] == '.')
+        {
+            TypeInfo* pTypeInfo = GetTypeInfo(ref new ::Platform::String(longMemberName->Data(), lastDotIndex));
+            TypeInfo* pNextTypeInfo = pTypeInfo + 1;
+            if (pTypeInfo)
+            {
+                PCWSTR shortMemberName = GetShortName(longMemberName->Data());
+                for (int i = pTypeInfo->firstMemberIndex; i < pNextTypeInfo->firstMemberIndex; i++)
+                {
+                    if (wcscmp(shortMemberName, MemberInfos[i].shortName) == 0)
+                    {
+                        return &MemberInfos[i];
+                    }
+                }
+            }
+            break;
         }
     }
     return nullptr;
@@ -179,6 +432,12 @@ TypeInfo* GetTypeInfo(::Platform::String^ typeName)
         userType->IsLocalType = pTypeInfo->isLocalType;
         userType->IsReturnTypeStub = pTypeInfo->isReturnTypeStub;
         userType->IsBindable = pTypeInfo->isBindable;
+        int nextMemberIndex = pTypeInfo->firstMemberIndex;
+        for (int i=pTypeInfo->firstMemberIndex; i < pNextTypeInfo->firstMemberIndex; i++)
+        {
+            userType->AddMemberName(::Platform::StringReference(MemberInfos[i].shortName));
+            nextMemberIndex++;
+        }
         return userType;
     }
 }
@@ -186,8 +445,20 @@ TypeInfo* GetTypeInfo(::Platform::String^ typeName)
 ::Windows::UI::Xaml::Markup::IXamlMember^ ::XamlTypeInfo::InfoProvider::XamlTypeInfoProvider::CreateXamlMember(::Platform::String^ longMemberName)
 {
     ::XamlTypeInfo::InfoProvider::XamlMember^ xamlMember = nullptr;
-    // No Local Properties
-    (void)longMemberName; // Unused parameter
+    MemberInfo* pMemberInfo = GetMemberInfo(longMemberName);
+    if (pMemberInfo != nullptr)
+    {
+        xamlMember = ref new ::XamlTypeInfo::InfoProvider::XamlMember(
+            this,
+            ::Platform::StringReference(pMemberInfo->shortName),
+            ::Platform::StringReference(TypeInfos[pMemberInfo->typeIndex].typeName));
+        xamlMember->Getter = pMemberInfo->getter;
+        xamlMember->Setter = pMemberInfo->setter;
+        xamlMember->TargetTypeName = pMemberInfo->targetTypeIndex >= 0 ? ::Platform::StringReference(TypeInfos[pMemberInfo->targetTypeIndex].typeName) : L"";
+        xamlMember->IsReadOnly = pMemberInfo->isReadOnly;
+        xamlMember->IsDependencyProperty = pMemberInfo->isDependencyProperty;
+        xamlMember->IsAttachable = pMemberInfo->isAttachable;
+    }
     return xamlMember;
 }
 

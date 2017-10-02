@@ -29,6 +29,9 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
+using namespace Windows::UI;
+using namespace Microsoft::Graphics::Canvas::UI::Xaml;
+
 // using namespace System::Runtime::InteropServices;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -47,15 +50,15 @@ int IterCount;
 // Create the queue 
 FactorQueue FNQueue;
 FactorQueue SolvedQueue;
+FactorQueue DrawQueue; 
 
 // Counter for number solved - global so doesn't need to be passed around 
 int SolvedCount;
 
 // declare the functions we will use later to build the nodes and solve the factor and update the screen
 void CreateChidNodesQueue();
-void ScanandDispatchQueue(FactorWin::MainPage^ Sender);
 
-delegate void UpdateListFn();
+
 
 
 MainPage::MainPage()
@@ -68,12 +71,6 @@ MainPage::MainPage()
 
 	ResultLen = 0;
 	IterCount = 0;
-
-	// endless loop that scans the queue for entries
-	//thread ScanandDispatchQueueThread0(&ScanandDispatchQueue, this);							
-	//ScanandDispatchQueueThread0.detach();
-
-
 
 }
 
@@ -91,7 +88,7 @@ void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::
 	FactorWin::MainPage::ResultsList->Items->Clear();
 
 	// Set up the progress bar
-	FactorWin::MainPage::QueueProgress->Maximum = LNTarget.GetLongNumberLength() * 1000; 
+	FactorWin::MainPage::QueueProgress->Maximum = LNTarget.GetLongNumberLength() * 2000; 
 
 	Windows::Foundation::IAsyncActionWithProgress<int>^ ScanandDisp = FactorWin::MainPage::CreateChidNodesQueueAS();
 	ScanandDisp->Progress =
@@ -101,7 +98,7 @@ void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::
 		
 		// Update Queue info
 		FactorWin::MainPage::QueueText->Text = progress.ToString();
-		FactorWin::MainPage::QueueProgress->Value = progress ;
+		FactorWin::MainPage::QueueProgress->Value = progress;
 
 		// Update results as they become available
 		while (SolvedQueue.ReturnQueueSize() > 0)
@@ -119,61 +116,6 @@ void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::
 	}
 	);
 	
-
-}
-
-
-void FactorWin::MainPage::Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	while (SolvedQueue.ReturnQueueSize() > 0)
-	{
-		FactorNode FNItem = SolvedQueue.Pop();
-		LongNumber AValuePassed = FNItem.LNGetAValue();
-		LongNumber BValuePassed = FNItem.LNGetBValue();
-		Platform::String ^ AValueStr = LongNumberChar(AValuePassed);
-		Platform::String ^ BValueStr = LongNumberChar(BValuePassed);
-		Platform::String ^ Display = "A : " + AValueStr + " B : " + BValueStr;
-		FactorWin::MainPage::ResultsList->Items->Append(Display);
-	
-	}
-}
-
-// This function runs in a background thread and scans the Activity Queue and creates actions when it finds something 
-
-void ScanandDispatchQueue(FactorWin::MainPage^ Sender)
-{
-
-
-	// kick off the threads that will consume the new queue items
-	while (true)
-	{
-		SolvedCount = 0;							// reset solved counter
-
-		while (FNQueue.ReturnQueueSize() > 0)
-		{
-
-			// Std C++ Concurrency 
-			thread CreateComsume0(&CreateChidNodesQueue);
-			thread CreateComsume1(&CreateChidNodesQueue);
-			thread CreateComsume2(&CreateChidNodesQueue);
-			thread CreateComsume3(&CreateChidNodesQueue);
-			thread CreateComsume4(&CreateChidNodesQueue);
-
-			CreateComsume0.detach();
-			CreateComsume1.detach();
-			CreateComsume2.detach();
-			CreateComsume3.detach();
-			CreateComsume4.detach();
-
-
-		}
-
-		// wait one second before checking again
-		std::this_thread::sleep_for(std::chrono::seconds(1));		
-
-
-	}
-
 
 }
 
@@ -230,6 +172,7 @@ void CreateChidNodesQueue()
 					);
 					// PrintFactorNode(&FNAdd);
 					FNQueue.Push(FNAdd);
+					DrawQueue.Push(FNAdd);
 					break;
 					}
 					case 0:				// solved
@@ -241,6 +184,7 @@ void CreateChidNodesQueue()
 						true				// FactorCompletePassed
 					);
 					SolvedQueue.Push(FNAdd);
+					DrawQueue.Push(FNAdd);
 					SolvedCount++;
 					break;
 					}
@@ -299,6 +243,9 @@ Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateC
 		{
 
 			int QueueSize = FNQueue.ReturnQueueSize();
+			//returnStruct ReturnReporter; 
+			//ReturnReporter.QueueCount = QueueSize; 
+			//ReturnReporter.ThreadCount = 0;
 			reporter.report(QueueSize);
 			SolvedCount = 0;							// reset solved counter
 
@@ -307,8 +254,9 @@ Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateC
 			{
 
 				QueueSize = FNQueue.ReturnQueueSize();
+				//ReturnReporter.QueueCount = QueueSize;
 				reporter.report(QueueSize);
-				int ThreadCount = int(QueueSize / 1000) + 10;
+				int ThreadCount = int(QueueSize / 100) + 10;
 
 				vector<thread> threads;
 
@@ -333,3 +281,84 @@ Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateC
 
 }
 
+
+
+
+
+void MainPage::CanvasControl_Draw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
+{
+	// page offsets
+	int XPageLen = 400; 
+	int YPageLen = 400; 
+	int XOffset = 20;
+	int YOffset = (YPageLen / 2);
+	int LevelWidth = 20; 
+	int CircleSize = 5; 
+	int CircleGap = 1; 
+
+	int OldXPos = XOffset;
+	int OldYPos = YOffset;
+	int XPos = OldXPos;
+	int YPos = OldYPos;
+
+	// draw head of queue
+	args->DrawingSession->DrawEllipse(OldXPos, OldYPos, CircleSize, CircleSize, Colors::Black, 1);
+
+	int QueueSize = DrawQueue.ReturnQueueSize();
+	int AValLevel = 0; 
+	int BValLevel = 0;
+	int PreviousAValue = 0; 
+
+
+	while (QueueSize > 0)
+	{
+
+		
+		FactorNode FNItem = DrawQueue.Pop();
+		
+		// Get the details from the FactorNode
+		int Level = FNItem.LNGetLevel();
+		LongNumber AValuePassed = FNItem.LNGetAValue();
+		// LongNumber BValuePassed = FNItem.LNGetBValue();
+
+		AValLevel = AValuePassed.GetValue(Level);
+		// BValLevel = BValuePassed.GetValue(Level);
+
+		if (Level > 1)
+		{
+			PreviousAValue = AValuePassed.GetValue(Level-1);
+			OldXPos = ((Level - 1) * 50) + XOffset;;
+			OldYPos = (PreviousAValue * (CircleSize + CircleGap)) * PreviousAValue;;
+		}
+		else
+		{
+			PreviousAValue = 1; 
+			OldXPos = XOffset;
+			OldYPos = YOffset;
+		}
+
+		XPos = (Level * 50) + XOffset;
+		YPos = (AValLevel * (CircleSize + CircleGap)) * PreviousAValue; 
+
+		Windows::UI::Color CircleColour = Colors::Black; 
+		if (FNItem.GetFactorComplete()){ Windows::UI::Color CircleColour = Colors::Yellow;}
+		
+		args->DrawingSession->DrawLine(OldXPos, OldYPos, XPos, YPos, Colors::Black, 1);
+		args->DrawingSession->DrawEllipse(XPos, YPos, 5, 5, CircleColour, 1);
+
+		QueueSize = DrawQueue.ReturnQueueSize();
+
+
+	}
+
+
+
+}
+
+
+void FactorWin::MainPage::Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	FactorWin::MainPage::Canvas->Invalidate();
+
+
+}

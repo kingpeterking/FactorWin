@@ -19,6 +19,17 @@ namespace Windows {
         }
     }
 }
+namespace Microsoft {
+    namespace Graphics {
+        namespace Canvas {
+            namespace UI {
+                namespace Xaml {
+                    ref class CanvasControl;
+                }
+            }
+        }
+    }
+}
 
 namespace FactorWin
 {
@@ -45,7 +56,7 @@ namespace FactorWin
         private: ::Windows::UI::Xaml::Controls::ProgressBar^ QueueProgress;
         private: ::Windows::UI::Xaml::Controls::TextBox^ QueueText;
         private: ::Windows::UI::Xaml::Controls::TextBox^ IterationsText;
-        private: ::Windows::UI::Xaml::Controls::Button^ UpdateList;
+        private: ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ Canvas;
     };
 }
 

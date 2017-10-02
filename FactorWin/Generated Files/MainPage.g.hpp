@@ -83,8 +83,15 @@ void ::FactorWin::MainPage::Connect(int __connectionId, ::Platform::Object^ __ta
             break;
         case 11:
             {
-                this->UpdateList = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
-                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(this->UpdateList))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                this->Canvas = safe_cast<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^>(__target);
+                (safe_cast<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^>(this->Canvas))->Draw += ref new ::Windows::Foundation::TypedEventHandler<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^, ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^>(this, (void (::FactorWin::MainPage::*)
+                    (::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^, ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^))&MainPage::CanvasControl_Draw);
+            }
+            break;
+        case 12:
+            {
+                ::Windows::UI::Xaml::Controls::Button^ element12 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element12))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
                     (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click);
             }
             break;
