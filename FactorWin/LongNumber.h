@@ -21,8 +21,11 @@ public:
 	int GetLongNumberLength();															// returns length of digits 
 	friend void PrintLongNumberLR(LongNumber ArgA);										// prints long number normally left to right with endl
 	friend ostream& operator<< (ostream & stream, LongNumber ArgA);						// overload << for file output
-	friend Platform::String^ LongNumberChar(LongNumber ArgA);
-	
+	friend Platform::String^ LongNumberChar(LongNumber ArgA);							// convert long number to platform string for display
+	friend int LongNumbertoInt(LongNumber ArgA);										// returns int if long number not too long
+	friend LongNumber LongNumberReturnPart(LongNumber ArgA, int start, int length);				// returns part of a number - works like Mid - from start for length chars
+	friend LongNumber LongNumberInvert(LongNumber ArgA);								// Inverts order of numbers - used for plotting 
+
 	// Arithmetic Operations
 	friend LongNumber LongNumberAdd(LongNumber ArgA, LongNumber ArgB);				// adds
 	friend LongNumber LongNumberMultiply(LongNumber ArgA, LongNumber ArgB);			// multiplies two Long Numbers (base 10)

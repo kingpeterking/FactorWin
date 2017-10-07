@@ -17,7 +17,6 @@
         <TextBlock HorizontalAlignment="Left" Margin="608,49,0,0" TextWrapping="Wrap" Text="Z Calc" VerticalAlignment="Top" FontSize="36"/>
         <TextBlock HorizontalAlignment="Left" Margin="22,71,0,0" TextWrapping="Wrap" Text="A:" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="22,123,0,0" TextWrapping="Wrap" Text="B:" VerticalAlignment="Top"/>
-        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="1" Margin="475,78,0,0" Stroke="Black" VerticalAlignment="Top" Width="94"/>
         <ListBox x:Name="ResultsList" HorizontalAlignment="Left" Height="436" Margin="53,196,0,0" VerticalAlignment="Top" Width="422" FontSize="9"/>
         <TextBlock HorizontalAlignment="Left" Margin="608,307,0,0" TextWrapping="Wrap" Text="Threads" VerticalAlignment="Top"/>
         <ProgressBar x:Name="ThreadProgress" HorizontalAlignment="Left" Height="10" Margin="793,317,0,0" VerticalAlignment="Top" Width="100"/>
@@ -27,7 +26,7 @@
         <TextBox x:Name="QueueText" HorizontalAlignment="Left" Margin="682,348,0,0" TextWrapping="Wrap" Text="Messages" VerticalAlignment="Top" Height="30" Width="211" TextAlignment="Right"/>
         <TextBlock HorizontalAlignment="Left" Margin="608,407,0,0" TextWrapping="Wrap" Text="Iterations" VerticalAlignment="Top"/>
         <TextBox x:Name="IterationsText" HorizontalAlignment="Left" Margin="682,403,0,0" TextWrapping="Wrap" Text="Messages" VerticalAlignment="Top" Height="30" Width="211" TextAlignment="Right"/>
-        <canvas:CanvasControl x:Name="Canvas" Draw="CanvasControl_Draw" ClearColor="Gray" Margin="930,96,230,224" Width="400" Height="400"/>
+        <canvas:CanvasControl x:Name="Canvas" Draw="CanvasControl_Draw" ClearColor="Gray" Margin="930,96,30,224" Height="400"/>
         <Button Content="Draw" HorizontalAlignment="Left" Margin="930,59,0,0" VerticalAlignment="Top" Click="Button_Click"/>
     </Grid>
 </Page>

@@ -143,6 +143,80 @@ Platform::String^ LongNumberChar(LongNumber ArgA)
 	return ReturnChar;
 }
 
+int LongNumbertoInt(LongNumber ArgA)
+{
+	// returns int if long number less than 10 chars long, returns 0 otherwise
+	int LenA = ArgA.GetLongNumberLength();
+	int Result = 0;
+
+	if (LenA > 10)
+	{
+		return Result;
+	}
+	
+	for (int iCount = 0; iCount < LenA; iCount++)
+	{
+		Result += ArgA.GetValue(iCount) * pow(10, iCount); 
+	}
+
+	return Result; 
+
+}
+
+LongNumber LongNumberReturnPart(LongNumber ArgA, int start, int length)
+{
+	
+	// Returns part of the long number
+	// starts at position Start for length numbers
+	// works like mid
+	// works from right to left - so position 0 is the units column
+
+	//cout << "Returning Part" << endl;
+	//cout << "Start : " << start << endl;
+	//cout << "Length : " << length << endl;
+	//PrintLongNumberLR(ArgA);
+
+	// create holder for result
+	// should check that length of this is greater than length, but haven't implemented error handling yet!
+
+	LongNumber LNReturn(length);
+
+	// Check length of ArgA vs start and length 
+	LongNumber MinusOne(1);
+	MinusOne.SetLongNumber(1, 0);
+
+	int LenA = ArgA.GetLongNumberLength();
+	if (LenA <= start) { return MinusOne; }
+	if (LenA < length) { return MinusOne; }
+
+	// PrintLongNumberLR(ArgA);
+
+	// build the new number character by character
+	for (int iCount = 0; iCount < length; iCount++)
+	{
+		LNReturn.SetLongNumber(ArgA.GetValue(start + iCount), iCount);
+	}
+
+	// PrintLongNumberLR(LNReturn);
+	return LNReturn;
+
+
+}
+
+LongNumber LongNumberInvert(LongNumber ArgA)
+{
+	int LenA = ArgA.GetLongNumberLength();
+	LongNumber LNReturn(LenA); 
+
+	for (int iCount = 0; iCount <= LenA; iCount++)
+	{
+		LNReturn.SetLongNumber(ArgA.GetValue(LenA - iCount - 1), iCount); 
+	}
+	PrintLongNumberLR(LNReturn);
+
+	return LNReturn;
+}
+
 
 
 

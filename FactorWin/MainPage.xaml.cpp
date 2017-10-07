@@ -288,64 +288,96 @@ Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateC
 void MainPage::CanvasControl_Draw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 {
 	// page offsets
-	int XPageLen = 400; 
+	int XPageLen = 630; 
 	int YPageLen = 400; 
-	int XOffset = 20;
-	int YOffset = (YPageLen / 2);
-	int LevelWidth = 20; 
+	int XOffset = 40;
+	int YOffset = 40;
+	int XUsable = XPageLen - (2 * XOffset);
+	int YUsable = YPageLen - (2 * YOffset);
+	int LevelWidth = 50; 
 	int CircleSize = 5; 
-	int CircleGap = 1; 
 
 	int OldXPos = XOffset;
-	int OldYPos = YOffset;
+	int OldYPos = (int) (YUsable / 2) ;
 	int XPos = OldXPos;
 	int YPos = OldYPos;
+	Windows::UI::Color CircleColour = Colors::Black;
+
+	// Draw borders and Guidelines
+	args->DrawingSession->DrawLine(XOffset, 0, XOffset, YPageLen, Colors::Aqua, 1);								// left vertical
+	args->DrawingSession->DrawLine(0, YOffset, XPageLen, YOffset, Colors::Aqua, 1);								// top horizontal
+	args->DrawingSession->DrawLine(XPageLen - XOffset, 0, XPageLen - XOffset, YPageLen, Colors::Aqua, 1);		// right vertical 
+	args->DrawingSession->DrawLine(0, YPageLen - YOffset, XPageLen, YPageLen - YOffset, Colors::Aqua, 1);		// bottom horizontal
+	for (int iCount = 0; iCount <= 10; iCount++)
+	{
+		args->DrawingSession->DrawLine((iCount * LevelWidth) + XOffset, 0, (iCount * LevelWidth) + XOffset, YPageLen,  Colors::Aqua, 1);
+		args->DrawingSession->DrawText("L" + iCount, (iCount * LevelWidth) + XOffset, 2, Colors::Aqua);
+	}
+	
 
 	// draw head of queue
-	args->DrawingSession->DrawEllipse(OldXPos, OldYPos, CircleSize, CircleSize, Colors::Black, 1);
+	args->DrawingSession->DrawEllipse(XPos, YPos, CircleSize, CircleSize, Colors::Black, 1);
 
 	int QueueSize = DrawQueue.ReturnQueueSize();
 	int AValLevel = 0; 
 	int BValLevel = 0;
 	int PreviousAValue = 0; 
-
+	int AValueInt = 0; 
+	int AValueInvertedInt = 0;
 
 	while (QueueSize > 0)
 	{
 
-		
+		// get the head of the drawing queue
 		FactorNode FNItem = DrawQueue.Pop();
 		
 		// Get the details from the FactorNode
 		int Level = FNItem.LNGetLevel();
-		LongNumber AValuePassed = FNItem.LNGetAValue();
-		// LongNumber BValuePassed = FNItem.LNGetBValue();
 
-		AValLevel = AValuePassed.GetValue(Level);
-		// BValLevel = BValuePassed.GetValue(Level);
-
-		if (Level > 1)
+		if (Level < 10)					// if greater than 10 then don't draw
 		{
-			PreviousAValue = AValuePassed.GetValue(Level-1);
-			OldXPos = ((Level - 1) * 50) + XOffset;;
-			OldYPos = (PreviousAValue * (CircleSize + CircleGap)) * PreviousAValue;;
-		}
-		else
-		{
-			PreviousAValue = 1; 
-			OldXPos = XOffset;
-			OldYPos = YOffset;
-		}
 
-		XPos = (Level * 50) + XOffset;
-		YPos = (AValLevel * (CircleSize + CircleGap)) * PreviousAValue; 
+			// Details for this node
+			LongNumber AValuePassed = TrimLongNumber(FNItem.LNGetAValue());
+			AValueInt = LongNumbertoInt(AValuePassed); 
+			//FactorWin::MainPage::IterationsText->Text = AValueInt.ToString();
+			LongNumber AValueInverted = LongNumberInvert(AValuePassed); 
+			AValueInvertedInt = LongNumbertoInt(AValueInverted);
+			FactorWin::MainPage::IterationsText->Text = AValueInvertedInt.ToString();
+			
+			// Location of this node
+			XPos = (Level * LevelWidth) + XOffset;
+			YPos = ((AValueInvertedInt / pow(10, Level)) * YUsable) + YOffset;
 
-		Windows::UI::Color CircleColour = Colors::Black; 
-		if (FNItem.GetFactorComplete()){ Windows::UI::Color CircleColour = Colors::Yellow;}
+			if (Level > 1)
+			{
+				// Calculate its parent node
+				LongNumber AValuePrev = LongNumberReturnPart(AValuePassed, 0, Level);
+				LongNumber AValuePrevInverted = LongNumberInvert(AValuePrev); 
+				int AValuePrevInvertedInt = LongNumbertoInt(AValuePrevInverted);
+				OldXPos = ((Level - 1) * LevelWidth) + XOffset;;
+				OldYPos = ((AValuePrevInvertedInt / pow(10, (Level))) * YUsable) + YOffset;
+			}
+			else
+			{
+				// old positions = head node
+				OldXPos = XOffset;
+				OldYPos = (int)(YUsable / 2);
+			}
+
+			CircleColour = Colors::Black;
+			if (FNItem.GetFactorComplete() == true) 
+			{ 
+				CircleColour = Colors::Yellow; 
+			}
+
+			//args->DrawingSession->DrawLine(OldXPos, OldYPos, XPos, YPos, Colors::Black, 1);
+			args->DrawingSession->DrawEllipse(XPos, YPos, 5, 5, CircleColour, 1);
+			args->DrawingSession->DrawText("A" + AValueInt, XPos, YPos, Colors::Aqua);
 		
-		args->DrawingSession->DrawLine(OldXPos, OldYPos, XPos, YPos, Colors::Black, 1);
-		args->DrawingSession->DrawEllipse(XPos, YPos, 5, 5, CircleColour, 1);
+		} // end if 
 
+		// check queue size for while loop 
 		QueueSize = DrawQueue.ReturnQueueSize();
 
 
