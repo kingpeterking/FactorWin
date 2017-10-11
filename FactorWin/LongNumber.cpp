@@ -89,9 +89,14 @@ void LongNumber::SetLongNumber(int AValue, int APos)
 	{
 		this->LongNumberValue.reserve(APos + 1);
 		this->LongNumberLength++;
+		LongNumberValue.emplace(LongNumberValue.begin() + APos, AValue);
+	}
+	else
+	{
+		LongNumberValue[APos] = AValue;
 	}
 
-	LongNumberValue.emplace(LongNumberValue.begin() + APos, AValue);
+	
 }
 
 
@@ -156,7 +161,7 @@ int LongNumbertoInt(LongNumber ArgA)
 	
 	for (int iCount = 0; iCount < LenA; iCount++)
 	{
-		Result += ArgA.GetValue(iCount) * pow(10, iCount); 
+		Result += ArgA.GetValue(iCount) * (int) pow(10, iCount); 
 	}
 
 	return Result; 
@@ -203,19 +208,7 @@ LongNumber LongNumberReturnPart(LongNumber ArgA, int start, int length)
 
 }
 
-LongNumber LongNumberInvert(LongNumber ArgA)
-{
-	int LenA = ArgA.GetLongNumberLength();
-	LongNumber LNReturn(LenA); 
 
-	for (int iCount = 0; iCount <= LenA; iCount++)
-	{
-		LNReturn.SetLongNumber(ArgA.GetValue(LenA - iCount - 1), iCount); 
-	}
-	PrintLongNumberLR(LNReturn);
-
-	return LNReturn;
-}
 
 
 
@@ -516,6 +509,95 @@ LongNumber LongNumberMultiply(LongNumber ArgA, LongNumber ArgB)
 
 }
 
+LongNumber LongNumberMultiplyInt(LongNumber ArgA, int mult)
+{
+	// Create a Long Number based on mult (using the char constructor
+	// Then use the standard multiply function 
+	string sMultChar = to_string(mult);
+	char const *MultCharPointer = sMultChar.c_str();
+
+	LongNumber LNMult(MultCharPointer);			// constructor to hold Long Number based on int
+	//PrintLongNumberLR(LNMult);
+
+	LongNumber Result = LongNumberMultiply(ArgA, LNMult);
+	return Result;
+}
+
+LongNumber LongNumberSubtract(LongNumber ArgA, LongNumber ArgB)
+{
+	// subtracts B from A
+	// Assumes A greater than B - needs to be checked by calling routine before calling subtract 
+	// Also assumes that both are positive - ie signs are ignored and result is always positive
+	// cout << "Subtract"; 
+
+	// get the length of both numbers 
+	int iCount;
+	int ArgALen = ArgA.GetLongNumberLength();
+	int ArgBLen = ArgB.GetLongNumberLength();
+	int iResultLen = ArgALen;
+	// cout << "Length Arg A : " << ArgALen << " : Length Arg B : " << ArgBLen << endl;
+
+	// Subtract the two numbers
+	int iCarry = 0;
+	int iSumUnit = 0;
+	int iSum = 0;
+	int SignRes = 1; // holder until implement subtraction 
+
+	LongNumber LNResult(iResultLen + 1);
+	// cout << "Result Len : " << iResultLen << '\n';
+
+	// cout << "Subtraction Loop \n";
+	for (iCount = 0; iCount < iResultLen; iCount++)
+	{
+		int AVal;
+		int BVal;
+		if (iCount < ArgALen)
+		{
+			AVal = ArgA.GetValue(iCount);
+		}
+		else
+		{
+			AVal = 0;
+		}
+
+		if (iCount < ArgBLen)
+		{
+			BVal = ArgB.GetValue(iCount);
+		}
+		else
+		{
+			BVal = 0;
+		}
+
+		iSum = (AVal - iCarry) - BVal;
+		if (iSum < 0)
+		{
+			iSumUnit = 10 + iSum;
+			iCarry = 1;
+		}
+		else
+		{
+			iSumUnit = iSum;
+			iCarry = 0;
+		}
+		LNResult.SetLongNumber(iSumUnit, iCount);
+		// cout << "iSum : " << iSum << endl; 
+		// cout << "iSumUnit : " << iSumUnit << endl;
+		// cout << "iCarry : " << iCarry << endl;
+	}
+
+	// Not needed for positive subtraction 
+	//LNResult.SetLongNumber(iCarry, iResultLen);
+
+	// PrintLongNumber(LNResult);
+	LNResult = TrimLongNumber(LNResult);
+
+	return LNResult;
+
+
+
+}
+
 
 
 
@@ -579,6 +661,5 @@ int LongNumberCompare(LongNumber ArgA, LongNumber ArgB)
 	return 0;
 
 }
-
 
 

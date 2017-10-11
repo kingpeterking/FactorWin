@@ -37,6 +37,8 @@ void ::FactorWin::MainPage::Connect(int __connectionId, ::Platform::Object^ __ta
         case 2:
             {
                 this->NoBInput = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(this->NoBInput))->TextChanged += ref new ::Windows::UI::Xaml::Controls::TextChangedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::Controls::TextChangedEventArgs^))&MainPage::NoBInput_TextChanged);
             }
             break;
         case 3:
@@ -58,41 +60,76 @@ void ::FactorWin::MainPage::Connect(int __connectionId, ::Platform::Object^ __ta
             break;
         case 6:
             {
-                this->ThreadProgress = safe_cast<::Windows::UI::Xaml::Controls::ProgressBar^>(__target);
+                this->QueueProgress = safe_cast<::Windows::UI::Xaml::Controls::ProgressBar^>(__target);
             }
             break;
         case 7:
             {
-                this->ThreadsText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+                this->QueueText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
             }
             break;
         case 8:
             {
-                this->QueueProgress = safe_cast<::Windows::UI::Xaml::Controls::ProgressBar^>(__target);
+                this->AddButton = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(this->AddButton))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_1);
             }
             break;
         case 9:
             {
-                this->QueueText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+                ::Windows::UI::Xaml::Controls::Button^ element9 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element9))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_2);
             }
             break;
         case 10:
             {
-                this->IterationsText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+                ::Windows::UI::Xaml::Controls::Button^ element10 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element10))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click);
             }
             break;
         case 11:
             {
-                this->Canvas = safe_cast<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^>(__target);
-                (safe_cast<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^>(this->Canvas))->Draw += ref new ::Windows::Foundation::TypedEventHandler<::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^, ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^>(this, (void (::FactorWin::MainPage::*)
-                    (::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^, ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^))&MainPage::CanvasControl_Draw);
+                ::Windows::UI::Xaml::Controls::Button^ element11 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element11))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_3);
             }
             break;
         case 12:
             {
                 ::Windows::UI::Xaml::Controls::Button^ element12 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
                 (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element12))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
-                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click);
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_4);
+            }
+            break;
+        case 13:
+            {
+                ::Windows::UI::Xaml::Controls::Button^ element13 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element13))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_5);
+            }
+            break;
+        case 14:
+            {
+                ::Windows::UI::Xaml::Controls::Button^ element14 = safe_cast<::Windows::UI::Xaml::Controls::Button^>(__target);
+                (safe_cast<::Windows::UI::Xaml::Controls::Button^>(element14))->Click += ref new ::Windows::UI::Xaml::RoutedEventHandler(this, (void (::FactorWin::MainPage::*)
+                    (::Platform::Object^, ::Windows::UI::Xaml::RoutedEventArgs^))&MainPage::Button_Click_6);
+            }
+            break;
+        case 15:
+            {
+                this->IterCountText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+            }
+            break;
+        case 16:
+            {
+                this->ThreadCountText = safe_cast<::Windows::UI::Xaml::Controls::TextBox^>(__target);
+            }
+            break;
+        case 17:
+            {
+                this->ThreadCountBar = safe_cast<::Windows::UI::Xaml::Controls::ProgressBar^>(__target);
             }
             break;
     }

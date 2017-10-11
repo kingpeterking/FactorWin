@@ -19,17 +19,6 @@ namespace Windows {
         }
     }
 }
-namespace Microsoft {
-    namespace Graphics {
-        namespace Canvas {
-            namespace UI {
-                namespace Xaml {
-                    ref class CanvasControl;
-                }
-            }
-        }
-    }
-}
 
 namespace FactorWin
 {
@@ -51,12 +40,12 @@ namespace FactorWin
         private: ::Windows::UI::Xaml::Controls::Button^ FactorButton;
         private: ::Windows::UI::Xaml::Controls::TextBox^ Messages;
         private: ::Windows::UI::Xaml::Controls::ListBox^ ResultsList;
-        private: ::Windows::UI::Xaml::Controls::ProgressBar^ ThreadProgress;
-        private: ::Windows::UI::Xaml::Controls::TextBox^ ThreadsText;
         private: ::Windows::UI::Xaml::Controls::ProgressBar^ QueueProgress;
         private: ::Windows::UI::Xaml::Controls::TextBox^ QueueText;
-        private: ::Windows::UI::Xaml::Controls::TextBox^ IterationsText;
-        private: ::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ Canvas;
+        private: ::Windows::UI::Xaml::Controls::Button^ AddButton;
+        private: ::Windows::UI::Xaml::Controls::TextBox^ IterCountText;
+        private: ::Windows::UI::Xaml::Controls::TextBox^ ThreadCountText;
+        private: ::Windows::UI::Xaml::Controls::ProgressBar^ ThreadCountBar;
     };
 }
 

@@ -139,6 +139,7 @@
     <ClInclude Include="FactorNode.h" />
     <ClInclude Include="FactorQueue.h" />
     <ClInclude Include="LongNumber.h" />
+    <ClInclude Include="LongNumberDivision.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -178,6 +179,7 @@
     <ClCompile Include="FactorNode.cpp" />
     <ClCompile Include="FactorQueue.cpp" />
     <ClCompile Include="LongNumber.cpp" />
+    <ClCompile Include="LongNumberDivision.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>

@@ -19,6 +19,7 @@
     <ClCompile Include="LongNumber.cpp" />
     <ClCompile Include="FactorNode.cpp" />
     <ClCompile Include="FactorQueue.cpp" />
+    <ClCompile Include="LongNumberDivision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="LongNumber.h" />
     <ClInclude Include="FactorNode.h" />
     <ClInclude Include="FactorQueue.h" />
+    <ClInclude Include="LongNumberDivision.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
