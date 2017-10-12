@@ -96,7 +96,7 @@ void FactorWin::MainPage::FactorButton_Click(Platform::Object^ sender, Windows::
 
 	// Set up the progress bar
 	FactorWin::MainPage::QueueProgress->Maximum = LNTargetA.GetLongNumberLength() * 2000; 
-	FactorWin::MainPage::ThreadCountBar->Maximum = 20;
+	FactorWin::MainPage::ThreadCountBar->Maximum = 10;
 
 	Windows::Foundation::IAsyncActionWithProgress<int>^ ScanandDisp = FactorWin::MainPage::CreateChidNodesQueueAS();
 	ScanandDisp->Progress =
@@ -136,81 +136,86 @@ void CreateChidNodesQueue()
 {
 	if (FNQueue.ReturnQueueSize() != 0)
 	{
-
-		// Add new elements to the queue or solve ones that are already there 
-		//cout << "Create Children Nodes" << endl;
-
-		// Get the next element from the queue 
-		FactorNode FNItem = FNQueue.Pop();
-
-		// Get the details from the FactorNode
-		int Level = FNItem.LNGetLevel();
-		// cout << "Level : " << Level << endl;
-		LongNumber AValuePassed = FNItem.LNGetAValue();
-		LongNumber BValuePassed = FNItem.LNGetBValue();
-		// cout << " AValuePassed : " << AValuePassed << " BValuePassed : " << BValuePassed << endl;
-		LongNumber MultResult(ResultLen * 2);									// Result of A * B 
-
-		int iTarget = LNTargetA.GetValue(Level);
-		int iRes = 0;
-
-		for (int iCountA = 0; iCountA <= 9; iCountA++)
+		for (int iQueueCount = 0; iQueueCount < 500; iQueueCount++)
 		{
-			int BCountFrom = 0;
-			if (Level == 0) { BCountFrom = iCountA; }
-			for (int iCountB = BCountFrom; iCountB <= 9; iCountB++)
+			if (FNQueue.ReturnQueueSize() == 0) {break; } // stop if queue is empty
+			
+			// Add new elements to the queue or solve ones that are already there 
+			//cout << "Create Children Nodes" << endl;
+
+			// Get the next element from the queue 
+			FactorNode FNItem = FNQueue.Pop();
+
+			// Get the details from the FactorNode
+			int Level = FNItem.LNGetLevel();
+			// cout << "Level : " << Level << endl;
+			LongNumber AValuePassed = FNItem.LNGetAValue();
+			LongNumber BValuePassed = FNItem.LNGetBValue();
+			// cout << " AValuePassed : " << AValuePassed << " BValuePassed : " << BValuePassed << endl;
+			LongNumber MultResult(ResultLen * 2);									// Result of A * B 
+
+			int iTarget = LNTargetA.GetValue(Level);
+			int iRes = 0;
+
+			for (int iCountA = 0; iCountA <= 9; iCountA++)
 			{
-				AValuePassed.SetLongNumber(iCountA, Level);
-				BValuePassed.SetLongNumber(iCountB, Level);
-
-				MultResult = LongNumberMultiply(AValuePassed, BValuePassed);
-				// cout << " MultResult : " << MultResult << " AValuePassed : " << AValuePassed << " BValuePassed : " << BValuePassed << endl;
-				iRes = MultResult.GetValue(Level);
-
-				if (iRes == iTarget)
+				int BCountFrom = 0;
+				if (Level == 0) { BCountFrom = iCountA; }
+				for (int iCountB = BCountFrom; iCountB <= 9; iCountB++)
 				{
-					bool FactorComplete = false;
-					int CompResult = LongNumberCompare(MultResult, LNTargetA);			// compares, returns 1 if >, 0 if equal and -1 if <
-																						// cout << "Comp Result : " << CompResult << " MultResult : " << MultResult << " LNTarget : " << *LNTarget << endl;
-					switch (CompResult)
+					AValuePassed.SetLongNumber(iCountA, Level);
+					BValuePassed.SetLongNumber(iCountB, Level);
+
+					MultResult = LongNumberMultiply(AValuePassed, BValuePassed);
+					// cout << " MultResult : " << MultResult << " AValuePassed : " << AValuePassed << " BValuePassed : " << BValuePassed << endl;
+					iRes = MultResult.GetValue(Level);
+
+					if (iRes == iTarget)
 					{
-					case -1:			// less than
-					{FactorNode FNAdd(
-						Level + 1,			// LevelPassed
-						AValuePassed,		// AValuePassed
-						BValuePassed,		// BValuePassed
-						false				// FactorCompletePassed
-					);
-					// PrintFactorNode(&FNAdd);
-					FNQueue.Push(FNAdd);
-					break;
-					}
-					case 0:				// solved
-					{FactorComplete = true;
-					FactorNode FNAdd(
-						Level + 1,			// LevelPassed
-						AValuePassed,		// AValuePassed
-						BValuePassed,		// BValuePassed
-						true				// FactorCompletePassed
-					);
-					SolvedQueue.Push(FNAdd);
-					SolvedCount++;
-					break;
-					}
-					case 1: // greater than so exit B loop
-						goto ExitBLoop;
+						bool FactorComplete = false;
+						int CompResult = LongNumberCompare(MultResult, LNTargetA);			// compares, returns 1 if >, 0 if equal and -1 if <
+																							// cout << "Comp Result : " << CompResult << " MultResult : " << MultResult << " LNTarget : " << *LNTarget << endl;
+						switch (CompResult)
+						{
+						case -1:			// less than
+						{FactorNode FNAdd(
+							Level + 1,			// LevelPassed
+							AValuePassed,		// AValuePassed
+							BValuePassed,		// BValuePassed
+							false				// FactorCompletePassed
+						);
+						// PrintFactorNode(&FNAdd);
+						FNQueue.Push(FNAdd);
 						break;
-					default:
+						}
+						case 0:				// solved
+						{FactorComplete = true;
+						FactorNode FNAdd(
+							Level + 1,			// LevelPassed
+							AValuePassed,		// AValuePassed
+							BValuePassed,		// BValuePassed
+							true				// FactorCompletePassed
+						);
+						SolvedQueue.Push(FNAdd);
+						SolvedCount++;
 						break;
-					} // end switch
+						}
+						case 1: // greater than so exit B loop
+							goto ExitBLoop;
+							break;
+						default:
+							break;
+						} // end switch
 
 
-				} // end if result
+					} // end if result
 
-			} // end B loop
-		ExitBLoop:;
-			IterCount++;
-		} // end A loop
+				} // end B loop
+			ExitBLoop:;
+				IterCount++;
+			} // end A loop
+
+		} // end QueueCount loop 
 
 	} // end if queue
 
@@ -266,7 +271,7 @@ Windows::Foundation::IAsyncActionWithProgress<int>^ FactorWin::MainPage::CreateC
 				//ReturnReporter.QueueCount = QueueSize;
 				reporter.report(QueueSize);
 				ThreadCount = int(QueueSize / 1000) + 1;
-				if (ThreadCount >= 5) { ThreadCount = 5; }
+				if (ThreadCount >= 8) { ThreadCount = 8; }
 
 				vector<thread> threads;
 
